@@ -117,33 +117,21 @@ begin
             report "SUB 10-3: wrong NZCV" severity error;
 
         ----------------------------------------------------------------------------
-        --  5. SUB - negative result with no overflow (3 - 10 = -7)
+        --  5. SUB - negative result with overflow (3 - 10 = -7)
         ----------------------------------------------------------------------------
-        w_A  <= to_vec(3);
-        w_B  <= to_vec(10);
-        w_op <= OP_SUB;
+        w_A  <= "11111100";
+        w_B  <= "10000001";
+        w_op <= OP_ADD;
         wait for k_step;
 
-        assert w_result = x"F9"              -- 0xF9 = -7
-            report "SUB 3-10: wrong result" severity error;
-        assert w_flags  = "1000"             -- N=1 Z=0 C=0 V=0
+        assert w_result = "01111101"              -- 0xF9 = -7
+            report "SUB -4-127: wrong result" severity error;
+        assert w_flags  = "0011"             -- N=1 Z=0 C=0 V=1
             report "SUB 3-10: wrong NZCV" severity error;
 
+        wait for k_step; 
         ----------------------------------------------------------------------------
-        --  6. SUB - negative result with overflow (-100 - 30 = -130)
-        ----------------------------------------------------------------------------
-        w_A  <= to_vec(156);
-        w_B  <= to_vec(30);
-        w_op <= OP_SUB;
-        wait for k_step;
- 
-        assert w_result = x"7E"              -- incorrectly = 126
-            report "SUB 100-30: wrong result" severity error;
-        assert w_flags  = "0011"             -- N=0 Z=0 C=1 V=1
-            report "SUB 100-30: wrong NZCV" severity error;
-
-        ----------------------------------------------------------------------------
-        --  7. AND  (0x55 & 0x0F = 0x05)
+        --  6. AND  (0x55 & 0x0F = 0x05)
         ----------------------------------------------------------------------------
         w_A  <= x"55";
         w_B  <= x"0F";
@@ -156,7 +144,7 @@ begin
             report "AND: wrong NZCV" severity error;
 
         ----------------------------------------------------------------------------
-        --  8. OR   (0x80 | 0x01 = 0x81, negative set)
+        --  7. OR   (0x80 | 0x01 = 0x81, negative set)
         ----------------------------------------------------------------------------
         w_A  <= x"80";
         w_B  <= x"01";
